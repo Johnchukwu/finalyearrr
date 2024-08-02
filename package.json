@@ -1,0 +1,20 @@
+{
+  "name": "auth-system",
+  "version": "1.0.0",
+  "main": "index.js",
+"scripts": {
+  "start": "node Backend/index.js"
+},
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^5.12.3",
+    "nodemailer": "^6.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
