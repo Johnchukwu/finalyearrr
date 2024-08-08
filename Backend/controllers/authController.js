@@ -2,10 +2,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const transporter = require('../config/mailer');
 const generateOTP = require('../utils/generateOTP');
 const generateToken = require('../utils/generateToken');
-
+const sendMail = require("../utils/sendmail")
 exports.register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -17,20 +16,25 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = generateOTP();
-
+    const userName = firstName + " " + lastName;
     const user = new User({ firstName, lastName, email, password: hashedPassword, otp });
     await user.save();
-
-    // Send OTP via email
-    await transporter.sendMail({
+    
+    const mail = {
       to: email,
-      subject: 'OTP for Email Verification',
-      text: `Your OTP code is ${otp}`,
-    });
+      subject: "Verification OTP!!",
+      message: `Hi ${userName} <br><br><br> Your OTP is: ${otp}`,
+    };
+
+    await sendMail( mail);
 
     res.status(201).json({ message: 'User registered, please verify your email' });
+
+   
+
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+    console.log(error);
   }
 };
 
