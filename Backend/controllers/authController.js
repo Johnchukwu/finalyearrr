@@ -5,8 +5,11 @@ const User = require('../models/User');
 const generateOTP = require('../utils/generateOTP');
 const generateToken = require('../utils/generateToken');
 const sendMail = require("../utils/sendmail")
+
+//register function
+
 exports.register = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { fullName, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -16,19 +19,18 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = generateOTP();
-    const userName = firstName + " " + lastName;
-    const user = new User({ firstName, lastName, email, password: hashedPassword, otp });
+    const user = new User({ fullName, email, password: hashedPassword, otp });
     await user.save();
     
     const mail = {
       to: email,
       subject: "Verification OTP!!",
-      message: `Hi ${userName} <br><br><br> Your OTP is: ${otp}`,
+      message: `Hi ${fullName} <br><br><br> Your OTP is: ${otp}`,
     };
 
     await sendMail( mail);
-
-    res.status(201).json({ message: 'User registered, please verify your email' });
+    console.log(user);
+    res.status(201).json({ message: 'User registered, please verify your email', user_id: user, user_id: user._id });
 
    
 
@@ -78,6 +80,7 @@ exports.login = async (req, res) => {
     const token = generateToken(user._id);
     res.status(200).json({ token });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
