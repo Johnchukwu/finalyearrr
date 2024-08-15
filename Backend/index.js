@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+const courseRoutes = require('./routes/courses');
 const cors = require('cors');
 
 dotenv.config();
@@ -21,7 +22,8 @@ app.use(cors()); // Enable CORS for all requests
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes); //use auth routes
+app.use('/api/courses',courseRoutes )  //use course routes
 
 // Start server
 const PORT = process.env.PORT || 5900;

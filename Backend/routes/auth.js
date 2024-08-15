@@ -25,8 +25,8 @@ router.post(
 router.post(
   '/verify-email',
   [
-    check('email', 'Please include a valid email').isEmail(),
-    check('otp', 'OTP is required').notEmpty(),
+    check('uid', 'UID is required').notEmpty(), // Validate UID
+    check('otp', 'OTP is required').notEmpty(), // Validate OTP
   ],
   (req, res, next) => {
     const errors = validationResult(req);
@@ -35,7 +35,7 @@ router.post(
     }
     next();
   },
-  authController.verifyEmail
+  authController.verifyEmail // Pass to the verifyEmail controller
 );
 
 router.post(
