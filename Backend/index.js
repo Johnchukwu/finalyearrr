@@ -6,14 +6,16 @@ const authRoutes = require('./routes/auth');
 const cors = require('cors');
 
 dotenv.config();
-//CORS POLICY
-
-app.use(cors()); // Enable CORS for all requests
 
 // Connect to databaseDD
 connectDB();
 
 const app = express();
+
+
+//CORS POLICY
+
+app.use(cors()); // Enable CORS for all requests
 
 // Middleware
 app.use(express.json());
