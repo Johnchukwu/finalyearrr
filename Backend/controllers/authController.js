@@ -44,9 +44,15 @@ exports.verifyEmail = async (req, res) => {
   const { uid, otp } = req.body;
 
   try {
-    const user = await User.findOne({ uid }); // Find user by UID
-    if (!user || user.otp !== otp) {
-      return res.status(400).json({ message: 'Invalid OTP or UID' });
+    const user = await User.findOne({ uid });
+    console.log(`User with UID ${uid}:`, user); // Debug: Log the user object
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid UID' });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
     }
 
     user.isVerified = true;
@@ -55,9 +61,11 @@ exports.verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
+    console.error('Error in verifyEmail:', error); // Log the error
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 
 exports.login = async (req, res) => {
