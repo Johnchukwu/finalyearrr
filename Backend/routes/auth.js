@@ -1,10 +1,9 @@
 // routes/auth.js
 const express = require('express');
 const { check, validationResult } = require('express-validator');
-const authController = require('../controllers/authController');
+const authController = require('../controllers/authController'); // Ensure this path is correct
 
 const router = express.Router();
-
 router.post(
   '/register',
   [
@@ -19,8 +18,9 @@ router.post(
     }
     next();
   },
-  authController.register
+  authController.register // Ensure this function is defined in authController
 );
+  
 
 router.post(
   '/verify-email',
@@ -35,7 +35,7 @@ router.post(
     }
     next();
   },
-  authController.verifyEmail // Pass to the verifyEmail controller
+  authController.verifyEmail // Ensure this function is defined in authController
 );
 
 router.post(
@@ -51,7 +51,7 @@ router.post(
     }
     next();
   },
-  authController.login
+  authController.login // Ensure this function is defined in authController
 );
 
 module.exports = router;
