@@ -7,31 +7,55 @@ const generateToken = require('../utils/generateToken');
 const sendMail = require("../utils/sendmail")
 
 //register function
-
 exports.register = async (req, res) => {
   const { fullName, email, password } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10); // Assuming bcrypt is used for hashing
+    // Check if the user already exists by email
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists with this email' });
+    }
 
+    // Hash the user's password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate OTP
+    const otp = generateOTP();
+
+    // Create a new user instance
     const newUser = new User({
       fullName,
       email,
       password: hashedPassword,
-      otp: generateOTP(), // Replace with your OTP generation logic
+      otp,
     });
 
+    // Save the new user to the database
     await newUser.save();
 
+    // Prepare the email content
+    const mail = {
+      to: email,
+      subject: "Verification OTP",
+      message: `Hi ${fullName},<br><br>Your OTP is: ${otp}`,
+    };
+
+    // Send the verification email
+    await sendMail(mail);
+
+    // Respond with the UID
     res.status(201).json({
       message: 'User registered, please verify your email',
-      user_id: newUser.uid, // Return the UID
+      user_id: newUser.uid,
     });
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
 
 
 exports.verifyEmail = async (req, res) => {
