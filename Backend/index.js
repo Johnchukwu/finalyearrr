@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require("./routes/users");
-const courseRoutes = require('./routes/courses');
+
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const cors = require('cors');
 
@@ -25,7 +25,6 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes); //use auth routes
-app.use('/api/courses',courseRoutes )  //use course routes
 app.use('api/users' , usersRoutes)
 app.use("/api/recommend", recommendationRoutes);
 

@@ -1,23 +1,56 @@
 const Course = require('../models/courseModel');
+const MyCourse = require('../models/myCourseModel');
+const Program = require('../models/programModel'); // not programModel (typo)
 
-exports.getRecommendations = async (req, res) => {
+const recommendCourses = async (req, res) => {
   try {
-    const { skillLevel, goal, interest, timeCommitment, learningFormat } = req.body;
+    const { skillLevel, goal, interest, learningFormat } = req.body;
+    const userId = req.user._id;
 
-    const courses = await Course.find({
+    const matches = await Course.find({
       level: { $regex: new RegExp(skillLevel, 'i') },
-      goal: goal,
-      interest: interest,
+      goal,
+      interest,
       format: learningFormat
     }).limit(5);
 
-    if (!courses || courses.length === 0) {
-      return res.status(404).json({ message: 'No matching courses found.' });
-    }
+    await MyCourse.deleteMany({ userId });
 
-    res.status(200).json(courses);
+    const recommendations = matches.map(course => ({
+      userId,
+      course: course._id
+    }));
+
+    await MyCourse.insertMany(recommendations);
+
+    res.status(200).json({ message: 'Recommendations saved.', data: matches });
   } catch (error) {
-    console.error('Error getting recommendations:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Error recommending courses.' });
   }
+};
+
+const startCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const userId = req.user._id;
+
+    const exists = await Program.findOne({ userId, course: courseId });
+    if (exists) return res.status(400).json({ message: 'Course already started' });
+
+    const newProgram = await Program.create({
+      userId,
+      course: courseId
+    });
+
+    res.status(201).json({ message: 'Course started', data: newProgram });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Could not start course' });
+  }
+};
+
+module.exports = {
+  recommendCourses,
+  startCourse
 };
