@@ -1,18 +1,20 @@
-const Course = require('../models/courseModel');
+const Recommendations = require('../models/courseModel');
 const MyCourse = require('../models/myCourseModel');
 const Program = require('../models/programModel'); // not programModel (typo)
 
 const recommendCourses = async (req, res) => {
   try {
     const { skillLevel, goal, interest, learningFormat } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.user.id;
+console.log(req.user.user)
+    const matches = await Recommendations.find({
+        level: { $regex: new RegExp(skillLevel.trim(), 'i') },
+        goal: { $in: [goal.trim()] },
+        interest: { $in: [interest.trim()] },
+        format: { $in: [learningFormat.trim()] }
+      }).limit(5);
 
-    const matches = await Course.find({
-      level: { $regex: new RegExp(skillLevel, 'i') },
-      goal,
-      interest,
-      format: learningFormat
-    }).limit(5);
+      const allCourses = await Recommendations.find({});
 
     await MyCourse.deleteMany({ userId });
 
@@ -33,7 +35,7 @@ const recommendCourses = async (req, res) => {
 const startCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.user.id;
 
     const exists = await Program.findOne({ userId, course: courseId });
     if (exists) return res.status(400).json({ message: 'Course already started' });
