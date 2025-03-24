@@ -1,25 +1,23 @@
-const fs = require('fs');
-const path = require('path');
+const Course = require('../models/courseModel');
 
-const courses = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../data/courses.json'))
-);
+exports.getRecommendations = async (req, res) => {
+  try {
+    const { skillLevel, goal, interest, timeCommitment, learningFormat } = req.body;
 
-exports.getRecommendations = (req, res) => {
-  const { skillLevel, goal, interest, timeCommitment, learningFormat } = req.body;
+    const courses = await Course.find({
+      level: { $regex: new RegExp(skillLevel, 'i') },
+      goal: goal,
+      interest: interest,
+      format: learningFormat
+    }).limit(5);
 
-  const filtered = courses.filter(course => {
-    const matchLevel = course.level.toLowerCase() === skillLevel.toLowerCase();
-    const matchGoal = course.goal.includes(goal);
-    const matchInterest = course.interest.includes(interest);
-    const matchFormat = course.format.includes(learningFormat);
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({ message: 'No matching courses found.' });
+    }
 
-    return matchLevel && matchGoal && matchInterest && matchFormat;
-  });
-
-  if (filtered.length === 0) {
-    return res.status(404).json({ message: 'No matching courses found.' });
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error('Error getting recommendations:', error);
+    res.status(500).json({ message: 'Server error' });
   }
-
-  res.status(200).json(filtered.slice(0, 5));
 };
