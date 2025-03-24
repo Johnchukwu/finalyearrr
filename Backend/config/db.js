@@ -8,6 +8,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       // To use native findOneAndUpdate rather than the deprecated one
+
     });
     console.log('MongoDB connected successfully');
   } catch (error) {

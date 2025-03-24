@@ -1,4 +1,4 @@
-// config/mailer.js
+  // config/mailer.js
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 

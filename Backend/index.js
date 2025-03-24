@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require("./routes/users");
 const courseRoutes = require('./routes/courses');
+const recommendationRoutes = require('./routes/recommendation');
 const cors = require('cors');
 
 dotenv.config();
@@ -26,7 +27,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes); //use auth routes
 app.use('/api/courses',courseRoutes )  //use course routes
 app.use('api/users' , usersRoutes)
+app.use("/api/recommend", recommendationRoutes)
 
 // Start server
-const PORT = process.env.PORT || 5900;
+const PORT = process.env.PORT || 5400;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
