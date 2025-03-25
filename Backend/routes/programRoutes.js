@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Program = require('../models/programModel');
 const auth = require('../middleware/auth');
+require('../models/courseModel');
+
 
 /**
  * @swagger
@@ -50,11 +52,17 @@ const auth = require('../middleware/auth');
  */
 router.get('/', auth, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id || req.user?.user?.id; // support both token shapes
+
+    console.log('🔍 Decoded userId:', userId);
+
     const programs = await Program.find({ userId }).populate('course');
+
+    console.log('📦 Programs found:', programs.length);
+
     res.status(200).json(programs);
   } catch (error) {
-    console.error('Error fetching programs:', error);
+    console.error('❌ Error fetching programs:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

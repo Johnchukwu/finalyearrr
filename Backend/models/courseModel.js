@@ -30,4 +30,7 @@ const courseSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+module.exports = mongoose.model('Course', courseSchema); // ✅ Must match 'ref' in your Program model
 module.exports = mongoose.model('Recommendations', courseSchema);
+
+
