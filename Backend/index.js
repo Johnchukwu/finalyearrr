@@ -10,6 +10,8 @@ const swaggerUi = require('swagger-ui-express');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const recommendationRoutes = require('./routes/recommendationRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const programRoutes = require('./routes/programRoutes');
 
 dotenv.config();
 
@@ -64,7 +66,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/recommend', recommendationRoutes);
-
+app.use('/api/course', courseRoutes);
+app.use('/api/programs', programRoutes);
 // Start server
 const PORT = process.env.PORT || 5400;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
