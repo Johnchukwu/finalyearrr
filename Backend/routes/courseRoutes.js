@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Course = require('../models/courseModel');
+const myCourseModel = require('../models/myCourseModel');
 
 /**
  * @swagger
@@ -14,7 +14,7 @@ const Course = require('../models/courseModel');
  */
 router.get('/', async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await myCourseModel.find();
     res.status(200).json(courses);
   } catch (error) {
     console.error(error);

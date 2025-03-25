@@ -14,13 +14,22 @@ console.log(req.user.user)
         format: { $in: [learningFormat.trim()] }
       }).limit(5);
 
-      const allCourses = await Recommendations.find({});
-
     await MyCourse.deleteMany({ userId });
 
     const recommendations = matches.map(course => ({
       userId,
-      course: course._id
+      title: course.title,
+      author: course.author,
+      niche: course.niche,
+      time_to_finish: course.time_to_finish,
+      number_of_students: course.number_of_students,
+      level: course.level,
+      lessons: course.lessons,
+      price: course.price,
+      image: course.image,
+      goal: course.goal,
+      interest: course.interest,
+      format: course.format    
     }));
 
     await MyCourse.insertMany(recommendations);
